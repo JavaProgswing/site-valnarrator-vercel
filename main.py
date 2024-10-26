@@ -16,7 +16,7 @@ from sanic.request import Request
 
 load_dotenv()  # take environment variables from .env.
 app = sanic.Sanic(__name__)
-app.static("/static/", "/static")
+app.static("/static/", "/static/")
 
 
 async def render_template(template_name):
