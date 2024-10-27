@@ -16,9 +16,11 @@ from sanic.request import Request
 
 load_dotenv()  # take environment variables from .env.
 app = sanic.Sanic(__name__)
-app.static('/static', './static')
+app.static("/static", "./static")
 
-db = None
+singleton_db = None
+
+
 async def render_template(template_name):
     try:
         with open(f"templates/{template_name}", "r") as file:
@@ -41,9 +43,9 @@ async def create_db_pool():
 
 @app.listener("before_server_start")
 async def create_db_connection(app, loop):
-    global db
+    global singleton_db
     await send_discord_webhook("Starting VALTECH server!")
-    db = await create_db_pool()
+    singleton_db = await create_db_pool()
 
 
 @app.listener("after_server_start")
@@ -56,7 +58,9 @@ async def run_periodic_tasks(app, loop):
 
 @app.listener("after_server_stop")
 async def close_db_connection():
-    await db.close()
+    global singleton_db
+    await send_discord_webhook("VALTECH server stopped!")
+    await singleton_db.close()
 
 
 @app.route("/favicon.ico")
@@ -96,8 +100,13 @@ async def referral_form(request: Request):
 # Endpoint to handle version downloads
 @app.route("/download/<version:float>", methods=["GET"])
 async def download_release(request: Request, version: float):
+    global singleton_db
     # await send_discord_webhook_async(f"VALTECH({request.headers['X-Forwarded-For']}) /download/{version}")
 
+    if singleton_db is None:
+        db = await create_db_pool()
+    else:
+        db = singleton_db
     async with db.acquire() as connection:
         # Check if the version exists in the database
         result = await connection.fetchrow(
@@ -116,7 +125,13 @@ async def download_release(request: Request, version: float):
 # Endpoint to handle version downloads
 @app.route("/download", methods=["GET"])
 async def download_latest_release(request: Request):
+    global singleton_db
     # await send_discord_webhook_async(f"VALTECH({request.headers['X-Forwarded-For']}) /download")
+
+    if singleton_db is None:
+        db = await create_db_pool()
+    else:
+        db = singleton_db
     async with db.acquire() as connection:
         # Fetch the latest version and release URL from the database
         result = await connection.fetchrow(
@@ -140,10 +155,10 @@ async def discord(request: Request):
 
 
 async def clear_quota_used():
-    try:
-        db = db
-    except AttributeError:
+    if singleton_db is None:
         db = await create_db_pool()
+    else:
+        db = singleton_db
 
     async with db.acquire() as connection:
         # Set quotaUsed to 0 for non-premium users
@@ -152,10 +167,10 @@ async def clear_quota_used():
 
 async def run_periodic_task2():
     print("Starting checks for expired referral tokens!")
-    try:
-        db = db
-    except AttributeError:
+    if singleton_db is None:
         db = await create_db_pool()
+    else:
+        db = singleton_db
     while True:
         current_time = int(time.time())
         async with db.acquire() as connection:
@@ -215,10 +230,10 @@ async def get_api_key():
 
 async def update_tokens_in_database():
     api_key = await get_api_key()
-    try:
-        db = db
-    except AttributeError:
+    if singleton_db is None:
         db = await create_db_pool()
+    else:
+        db = singleton_db
     async with db.acquire() as connection:
         # Fetch tokens from the database
         query = "SELECT * FROM accounttokens;"
