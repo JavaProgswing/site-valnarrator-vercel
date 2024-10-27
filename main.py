@@ -6,7 +6,6 @@ import time
 import asyncio
 from datetime import datetime, timedelta
 import requests
-from dotenv import load_dotenv
 import sanic
 from sanic.response import text as sanic_textify
 from sanic.response import file as send_file
@@ -15,7 +14,6 @@ from sanic.response import redirect
 from sanic.request import Request
 import logging
 
-load_dotenv()  # take environment variables from .env.
 app = sanic.Sanic(__name__)
 app.static("/static", "./static")
 logger = logging.getLogger()
