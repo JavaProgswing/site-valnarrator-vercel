@@ -13,11 +13,12 @@ from sanic.response import file as send_file
 from sanic.response import html as sanic_htmlify
 from sanic.response import redirect
 from sanic.request import Request
+import logging
 
 load_dotenv()  # take environment variables from .env.
 app = sanic.Sanic(__name__)
 app.static("/static", "./static")
-
+logger = logging.getLogger()
 singleton_db = None
 
 
@@ -70,6 +71,7 @@ async def favicon(request: Request):
 
 @app.route("/", methods=["GET", "HEAD"])
 async def index(request: Request):
+    logger.info(f"VALTECH({request.headers['X-Forwarded-For']}) /")
     # await send_discord_webhook_async(f"VALTECH({request.headers['X-Forwarded-For']}) /")
     return await render_template("index.html")
 
