@@ -18,7 +18,7 @@ load_dotenv()  # take environment variables from .env.
 app = sanic.Sanic(__name__)
 app.static('/static', './static')
 
-
+db = None
 async def render_template(template_name):
     try:
         with open(f"templates/{template_name}", "r") as file:
@@ -41,11 +41,14 @@ async def create_db_pool():
 
 @app.listener("before_server_start")
 async def create_db_connection(app, loop):
-    app.ctx.db = await create_db_pool()
+    global db
+    await send_discord_webhook("Starting VALTECH server!")
+    db = await create_db_pool()
 
 
 @app.listener("after_server_start")
 async def run_periodic_tasks(app, loop):
+    await send_discord_webhook("VALTECH server started!")
     loop.create_task(run_periodic_task())
     loop.create_task(run_periodic_task1())
     loop.create_task(run_periodic_task2())
@@ -53,7 +56,7 @@ async def run_periodic_tasks(app, loop):
 
 @app.listener("after_server_stop")
 async def close_db_connection():
-    await app.ctx.db.close()
+    await db.close()
 
 
 @app.route("/favicon.ico")
@@ -95,7 +98,7 @@ async def referral_form(request: Request):
 async def download_release(request: Request, version: float):
     # await send_discord_webhook_async(f"VALTECH({request.headers['X-Forwarded-For']}) /download/{version}")
 
-    async with app.ctx.db.acquire() as connection:
+    async with db.acquire() as connection:
         # Check if the version exists in the database
         result = await connection.fetchrow(
             "SELECT releaseurl FROM valchatreleases WHERE version=$1", version
@@ -114,7 +117,7 @@ async def download_release(request: Request, version: float):
 @app.route("/download", methods=["GET"])
 async def download_latest_release(request: Request):
     # await send_discord_webhook_async(f"VALTECH({request.headers['X-Forwarded-For']}) /download")
-    async with app.ctx.db.acquire() as connection:
+    async with db.acquire() as connection:
         # Fetch the latest version and release URL from the database
         result = await connection.fetchrow(
             "SELECT version, releaseurl FROM valchatreleases ORDER BY version DESC LIMIT 1"
@@ -138,7 +141,7 @@ async def discord(request: Request):
 
 async def clear_quota_used():
     try:
-        db = app.ctx.db
+        db = db
     except AttributeError:
         db = await create_db_pool()
 
@@ -150,7 +153,7 @@ async def clear_quota_used():
 async def run_periodic_task2():
     print("Starting checks for expired referral tokens!")
     try:
-        db = app.ctx.db
+        db = db
     except AttributeError:
         db = await create_db_pool()
     while True:
@@ -213,7 +216,7 @@ async def get_api_key():
 async def update_tokens_in_database():
     api_key = await get_api_key()
     try:
-        db = app.ctx.db
+        db = db
     except AttributeError:
         db = await create_db_pool()
     async with db.acquire() as connection:
