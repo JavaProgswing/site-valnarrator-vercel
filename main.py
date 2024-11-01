@@ -3,8 +3,6 @@ import aiohttp
 import asyncpg
 import json
 import time
-import asyncio
-from datetime import datetime, timedelta
 import requests
 import sanic
 from sanic.response import text as sanic_textify
@@ -75,7 +73,7 @@ async def referral_form(request: Request):
 
 
 # Endpoint to handle version downloads
-@app.route("/download/<version:float>", methods=["GET"])
+@app.route("/download/<version:number>", methods=["GET"])
 async def download_release(request: Request, version: float):
     # await send_discord_webhook_async(f"VALTECH({request.headers['X-Forwarded-For']}) /download/{version}")
 
@@ -129,39 +127,6 @@ async def clear_quota_used():
     async with db.acquire() as connection:
         # Set quotaUsed to 0 for non-premium users
         await connection.execute("UPDATE userhwids SET quotaused=0 WHERE premium=false")
-
-
-async def run_periodic_task2():
-    print("Starting checks for expired referral tokens!")
-    db = await create_db_pool()
-    while True:
-        current_time = int(time.time())
-        async with db.acquire() as connection:
-            async with connection.transaction():
-                await connection.execute(
-                    "DELETE FROM accountreferral WHERE expires_in <= $1", current_time
-                )
-        await asyncio.sleep(5)
-
-
-async def run_periodic_task():
-    now = datetime.utcnow()
-    midnight_utc = datetime(now.year, now.month, now.day) + timedelta(days=1)
-    while True:
-        now = datetime.utcnow()
-        midnight_utc = datetime(now.year, now.month, now.day) + timedelta(days=1)
-        time_until_midnight = (midnight_utc - now).total_seconds()
-        print(f"Sleeping for: {time_until_midnight} seconds.")
-        await asyncio.sleep(time_until_midnight)
-        await clear_quota_used()
-        await send_discord_webhook_async("Cleared quota for non premium users!")
-
-
-async def run_periodic_task1():
-    starttime = time.monotonic()
-    while True:
-        await update_tokens_in_database()
-        await asyncio.sleep(1800.0 - ((time.monotonic() - starttime) % 1800.0))
 
 
 async def _refresh_token(token, refresh_token, expires_in, api_key):
