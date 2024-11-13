@@ -30,7 +30,7 @@ async def render_template(template_name):
 async def create_db_pool():
     return await asyncpg.create_pool(
         host=os.environ.get("POSTGRES_HOST"),
-        port=6543,
+        port=5432,
         database=os.environ.get("POSTGRES_DATABASE"),
         user=os.environ.get("POSTGRES_USER"),
         password=os.environ.get("POSTGRES_PASSWORD"),
