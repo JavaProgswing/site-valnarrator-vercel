@@ -28,14 +28,18 @@ async def render_template(template_name):
 
 
 async def create_db_pool():
+    print(os.environ.get("POSTGRES_HOST"), flush=True)
+    print(os.environ.get("POSTGRES_DATABASE"), flush=True)
+    print(os.environ.get("POSTGRES_USER"), flush=True)
+    print(os.environ.get("POSTGRES_PASSWORD"), flush=True)
     return await asyncpg.create_pool(
         host=os.environ.get("POSTGRES_HOST"),
-        port=5432,
+        port=6543,
         database=os.environ.get("POSTGRES_DATABASE"),
         user=os.environ.get("POSTGRES_USER"),
         password=os.environ.get("POSTGRES_PASSWORD"),
         min_size=1,
-        max_size=1,
+        max_size=4,
     )
 
 
