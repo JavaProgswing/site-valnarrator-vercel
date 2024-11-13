@@ -99,8 +99,14 @@ async def download_release(request: Request, version: float):
 @app.route("/download", methods=["GET"])
 async def download_latest_release(request: Request):
     # await send_discord_webhook_async(f"VALTECH({request.headers['X-Forwarded-For']}) /download")
+    try:
+        db = await create_db_pool()
+    except Exception as e:
+        print(e, flush=True)
 
-    db = await create_db_pool()
+    print(db, flush=True)
+    if not db:
+        return sanic_textify("Unprocessable state", status=412)
     async with db.acquire() as connection:
         # Fetch the latest version and release URL from the database
         result = await connection.fetchrow(
