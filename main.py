@@ -35,7 +35,7 @@ async def create_db_pool():
         user=os.environ.get("POSTGRES_USER"),
         password=os.environ.get("POSTGRES_PASSWORD"),
         min_size=1,
-        max_size=4,
+        max_size=1,
     )
 
 
