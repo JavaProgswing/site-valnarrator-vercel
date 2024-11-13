@@ -15,7 +15,7 @@ import logging
 app = sanic.Sanic(__name__)
 app.static("/static", "./static")
 logger = logging.getLogger()
-#DEPLOY
+
 
 async def render_template(template_name):
     try:
