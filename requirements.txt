@@ -4,3 +4,4 @@ slowapi==0.1.9
 supabase==2.10.0
 redis
 aioredis
+jinja2
