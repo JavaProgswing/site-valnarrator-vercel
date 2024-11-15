@@ -44,28 +44,27 @@ async def favicon(request: Request):
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    logger.info(f"VALTECH({request.client.host}) /")
-    return templates.TemplateResponse("index.html")
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/TermsOfService", response_class=HTMLResponse)
 async def TOS(request: Request):
-    return templates.TemplateResponse("TOS.html")
+    return templates.TemplateResponse("TOS.html"), {"request": request}
 
 
 @app.get("/PrivacyPolicy", response_class=HTMLResponse)
 async def PP(request: Request):
-    return templates.TemplateResponse("PP.html")
+    return templates.TemplateResponse("PP.html", {"request": request})
 
 
 @app.get("/CancellationRefundPolicy", response_class=HTMLResponse)
 async def CRP(request: Request):
-    return templates.TemplateResponse("CRP.html")
+    return templates.TemplateResponse("CRP.html", {"request": request})
 
 
 @app.get("/referral", response_class=HTMLResponse)
 async def referral_form(request: Request):
-    return templates.TemplateResponse("referral.html")
+    return templates.TemplateResponse("referral.html", {"request": request})
 
 
 @app.get("/download/{version}", response_class=RedirectResponse)
