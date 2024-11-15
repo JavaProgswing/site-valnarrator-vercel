@@ -1,4 +1,4 @@
-aiohttp==3.9.1
-asyncpg==0.29.0
-requests==2.31.0
-sanic==20.12.7
+aiohttp
+fastapi==0.115.3
+slowapi==0.1.9
+supabase==2.10.0
