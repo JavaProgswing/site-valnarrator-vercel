@@ -1,7 +1,8 @@
 import os
 import aiohttp
 import logging
-from fastapi import FastAPI, Request, HTTPException
+import time
+from fastapi import FastAPI, Request, HTTPException, Response, status
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -12,6 +13,44 @@ from supabase import create_client, Client
 
 logger = logging.getLogger()
 
+
+
+def get_base_template(title: str, message: str, type: str, icon: str, button_text: str = "Return Home", button_link: str = "/") -> str:
+    return f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{title} - Valorant Narrator</title>
+        <link rel="stylesheet" href="/static/style.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="container" style="padding-top: 100px; display: flex; justify-content: center;">
+            <div class="status-card {type}">
+                <i class="{icon}"></i>
+                <h2>{title}</h2>
+                <p>{message}</p>
+                <a href="{button_link}" class="btn">{button_text}</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+def failure_template(title: str, message: str) -> str:
+    return get_base_template(title, message, "error", "fa-solid fa-circle-xmark")
+
+def success_template(duration: str) -> str:
+    message = f"You've been granted ValNarrator Premium for {duration}.<br>Restart your app to continue using ValNarrator Premium."
+    return get_base_template("Referral Applied", message, "success", "fa-solid fa-circle-check")
+
+def rate_limited_template(request: Request, exc: RateLimitExceeded) -> str:
+    return get_base_template("Rate Limit Exceeded", "You have made too many requests. Please try again later.", "warning", "fa-solid fa-triangle-exclamation")
+
+async def custom_rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded):
+    return HTMLResponse(content=rate_limited_template(request, exc), status_code=429)
 
 async def send_discord_webhook_async(message: str):
     payload = {"content": message}
@@ -28,7 +67,7 @@ app = FastAPI()
 limiter = Limiter(key_func=get_remote_address, headers_enabled=True, storage_uri=os.getenv("REDIS_URL"))
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, custom_rate_limit_exceeded_handler)
 
 templates = Jinja2Templates(directory="templates")
 
@@ -101,6 +140,91 @@ async def download_latest_release(request: Request):
     else:
         raise HTTPException(status_code=404, detail="No releases found")
 
+
+
+def convert_seconds(seconds):
+    SECONDS_IN_MINUTE = 60
+    SECONDS_IN_HOUR = 3600
+    SECONDS_IN_DAY = 86400
+    SECONDS_IN_MONTH = 2629800
+
+    if seconds == 0:
+        return "0 seconds"
+
+    months, seconds = divmod(seconds, SECONDS_IN_MONTH)
+    days, seconds = divmod(seconds, SECONDS_IN_DAY)
+    hours, seconds = divmod(seconds, SECONDS_IN_HOUR)
+    minutes, seconds = divmod(seconds, SECONDS_IN_MINUTE)
+
+    result = []
+    if months > 0:
+        result.append(f"{months} month{'s' if months > 1 else ''}")
+    if days > 0:
+        result.append(f"{days} day{'s' if days > 1 else ''}")
+    if hours > 0:
+        result.append(f"{hours} hour{'s' if hours > 1 else ''}")
+    if minutes > 0:
+        result.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
+    if seconds > 0:
+        result.append(f"{seconds} second{'s' if seconds > 1 else ''}")
+
+    return ", ".join(result)
+
+@app.get("/referralApply", response_class=HTMLResponse)
+@limiter.limit("9/6hours")
+async def handle_referral_apply(
+    request: Request, response: Response, referral_code: str = None, user_id: str = None
+):
+    if not user_id or not referral_code:
+        return HTMLResponse(
+            content=failure_template(
+                "Invalid Request", "Missing referral code or user ID!"
+            ),
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    referral_response = (
+        supabase.table("accountreferral")
+        .select("*")
+        .eq("referraltoken", referral_code)
+        .execute()
+    )
+    referral_record = referral_response.data
+
+    if not referral_record:
+        return HTMLResponse(
+            content=failure_template("Invalid Referral", "Referral code not found!"),
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    duration = referral_record[0]["duration"]
+    premium_till = int(time.time()) + duration
+
+    user_response = (
+        supabase.table("userhwids").select("*").eq("userid", user_id).execute()
+    )
+    user_exists = user_response.data
+
+    if not user_exists:
+        return HTMLResponse(
+            content=failure_template(
+                "Invalid User", "User ID does not exist in our records."
+            ),
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
+
+    # Update user and consume referral code
+    supabase.table("userhwids").update(
+        {"premium": True, "premium_till": premium_till}
+    ).eq("userid", user_id).execute()
+
+    supabase.table("accountreferral").delete().eq(
+        "referraltoken", referral_code
+    ).execute()
+
+    return HTMLResponse(
+        content=success_template(convert_seconds(duration)), status_code=200
+    )
 
 @app.get("/discord")
 async def discord(request: Request):
