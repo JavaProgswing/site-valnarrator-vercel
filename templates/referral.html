@@ -61,8 +61,11 @@
         if (userId) {
           const userIdInput = document.getElementById("user_id");
           userIdInput.value = userId;
-          // Optional: disable if you want to lock it
-          userIdInput.disabled = true;
+          // Use readOnly so it's still submitted but not editable
+          userIdInput.readOnly = true;
+          // Optional: Add a visual cue class if needed, but readOnly usually styles it distinctively enough or we can add CSS
+          userIdInput.style.opacity = "0.7"; 
+          userIdInput.style.cursor = "not-allowed";
         }
       });
     </script>
