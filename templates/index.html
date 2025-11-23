@@ -195,7 +195,7 @@
           </div>
 
           <div
-            id="paypal-container-9T3V8M3MFPBNE"
+            id="onetime-payment-section"
             style="
               margin-top: 20px;
               padding: 20px;
@@ -277,6 +277,7 @@
           </div>
 
           <div
+            id="subscription-payment-section"
             style="
               margin-top: 20px;
               padding: 20px;
@@ -430,20 +431,27 @@
         urlParams.get("user-id") ||
         localStorage.getItem("userid");
 
-      const paypalContainer = document.getElementById(
-        "paypal-container-9T3V8M3MFPBNE"
+      const onetimePaymentContainer = document.getElementById(
+        "onetime-payment-section"
+      );
+      const subsPaymentContainer = document.getElementById(
+        "subscription-payment-section"
       );
       const subscribeBtn = document.getElementById("subscribe-btn");
 
       function setPaymentState(enabled) {
         if (enabled) {
-          paypalContainer.style.opacity = "1";
-          paypalContainer.style.pointerEvents = "auto";
+          onetimePaymentContainer.style.opacity = "1";
+          onetimePaymentContainer.style.pointerEvents = "auto";
+          subsPaymentContainer.style.opacity = "1";
+          subsPaymentContainer.style.pointerEvents = "auto";
           subscribeBtn.disabled = false;
           subscribeBtn.innerText = "Subscribe Monthly";
         } else {
-          paypalContainer.style.opacity = "0.5";
-          paypalContainer.style.pointerEvents = "none";
+          onetimePaymentContainer.style.opacity = "0.5";
+          onetimePaymentContainer.style.pointerEvents = "none";
+          subsPaymentContainer.style.opacity = "0.5";
+          subsPaymentContainer.style.pointerEvents = "none";
           subscribeBtn.disabled = true;
           subscribeBtn.innerText = "Enter Valid User ID";
         }
