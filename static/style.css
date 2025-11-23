@@ -1,0 +1,471 @@
+/* Valorant Narrator - Custom Styles */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+    --val-red: #ff4655;
+    --val-dark: #0f1923;
+    --val-dark-blue: #1f2b38; /* Slightly lighter for cards */
+    --val-white: #ece8e1;
+    --val-gray: #768079;
+    --val-black: #000000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--val-dark);
+    color: var(--val-white);
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+}
+
+/* --- Utilities --- */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 15px 30px;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--val-white);
+    background-color: var(--val-red);
+    border: none;
+    position: relative;
+    cursor: pointer;
+    clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn:hover {
+    background-color: #d93644;
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--val-white);
+    clip-path: none; /* Or keep it if we want the shape with border (harder with clip-path) */
+    border-radius: 0;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+/* Custom clip-path border simulation would be complex, sticking to simple outline or solid for now */
+.btn-outline::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--val-white);
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+.btn-outline:hover {
+    color: var(--val-dark);
+}
+.btn-outline:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+
+/* --- Hero Section --- */
+.hero {
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(rgba(15, 25, 35, 0.8), rgba(15, 25, 35, 0.9)), url('images/bg-site.png');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 5rem;
+    margin-bottom: 10px;
+    line-height: 1;
+    text-shadow: 2px 2px 0px var(--val-red);
+}
+
+.hero-content p {
+    font-size: 1.5rem;
+    color: var(--val-gray);
+    margin-bottom: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+/* --- Features Section --- */
+.features {
+    padding: 80px 0;
+    background-color: var(--val-dark);
+}
+
+.section-title {
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 60px;
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: var(--val-red);
+    margin: 10px auto 0;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.feature-card {
+    background-color: var(--val-dark-blue);
+    padding: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--val-red);
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background-color: var(--val-red);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover::before {
+    transform: scaleY(1);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 5px rgba(255, 70, 85, 0.5));
+}
+.feature-icon img {
+    width: 100%;
+    height: auto;
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: var(--val-red);
+}
+
+/* --- Testimonials --- */
+.testimonials {
+    padding: 80px 0;
+    background-color: #151f2b; /* Slightly different shade */
+}
+
+.testimonial-slider {
+    display: flex;
+    overflow-x: auto;
+    gap: 30px;
+    padding-bottom: 20px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Firefox */
+}
+.testimonial-slider::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.testimonial-card {
+    min-width: 350px;
+    background-color: var(--val-dark);
+    padding: 30px;
+    border-left: 4px solid var(--val-gray);
+    scroll-snap-align: center;
+}
+
+.testimonial-text {
+    font-style: italic;
+    margin-bottom: 20px;
+    color: #ccc;
+}
+
+.testimonial-author {
+    font-weight: 700;
+    color: var(--val-red);
+    text-align: right;
+}
+
+/* --- CTA Section --- */
+.cta {
+    padding: 100px 0;
+    text-align: center;
+    background: linear-gradient(45deg, var(--val-dark) 0%, #2c1618 100%);
+}
+
+.cta h2 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+}
+
+.cta p {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    color: var(--val-gray);
+}
+
+/* --- Footer --- */
+.footer {
+    background-color: #0b1219;
+    padding: 40px 0;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.discord-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #7289da;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.discord-link img {
+    width: 30px;
+}
+
+.footer-links {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: var(--val-gray);
+}
+
+.footer-links a:hover {
+    color: var(--val-white);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 3rem;
+    }
+    .hero-content p {
+        font-size: 1.1rem;
+    }
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    .btn {
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+    }
+    .section-title {
+        font-size: 2.5rem;
+    }
+}
+
+/* --- Referral Page --- */
+.referral-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: linear-gradient(rgba(15, 25, 35, 0.8), rgba(15, 25, 35, 0.9)), url('images/bg-site.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.referral-card {
+    background-color: rgba(31, 43, 56, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    position: relative;
+}
+
+.referral-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 4px;
+    background-color: var(--val-red);
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--val-white);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--val-dark);
+    border: 1px solid #444;
+    color: var(--val-white);
+    font-family: 'Roboto', sans-serif;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--val-red);
+}
+
+.input-group input:disabled {
+    background-color: #2a2a2a;
+    color: #888;
+    cursor: not-allowed;
+}
+
+/* --- Payment Modal --- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: var(--val-dark-blue);
+    padding: 40px;
+    border: 1px solid var(--val-red);
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 0 20px rgba(255, 70, 85, 0.2);
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--val-gray);
+    line-height: 1;
+}
+
+.close-modal:hover {
+    color: var(--val-white);
+}
+
+.payment-tabs {
+    display: flex;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 15px;
+    background: transparent;
+    border: none;
+    color: var(--val-gray);
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.2rem;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s;
+}
+
+.tab-btn.active {
+    color: var(--val-red);
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--val-red);
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.payment-note {
+    font-size: 0.9rem;
+    color: var(--val-gray);
+    margin-top: 15px;
+    text-align: center;
+}

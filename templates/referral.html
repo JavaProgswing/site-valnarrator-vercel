@@ -2,103 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Referral Code</title>
-<style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .container {
-            position: relative;
-            text-align: center;
-            background-color: rgba(30, 30, 30, 0.6);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            z-index: 2;
-            max-width: 500px;
-            width: 100%;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: none;
-            background-color: #2e2e2e;
-            color: white;
-            box-sizing: border-box;
-        }
-
-        .input-group input::placeholder {
-            color: #888;
-        }
-
-        .input-group input[disabled] {
-            background-color: #3e3e3e;
-            color: #888;
-        }
-
-        .button {
-            padding: 10px 20px;
-            background-color: #ff4c4c;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .button:hover {
-            background-color: #ff6b6b;
-        }
-
-        .background-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url("https://valnarrator.vercel.app/static/images/bg-site.png");
-            background-size: cover;
-            background-position: center;
-            z-index: 1;
-            opacity: 0.7;
-        }
-
-        .title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referral Code - Valorant Narrator</title>
+    <link rel="stylesheet" href="static/style.css">
 </head>
-<body>
-    <div class="background-image"></div>
-    <div class="container">
-        <h1 class="title">Valorant Narrator</h1>
+<body class="referral-body">
+    <div class="referral-card">
+        <h1 style="margin-bottom: 30px;">Valorant Narrator</h1>
         <form action="https://api-valnarrator.vercel.app/referralApply" method="get" id="referralForm">
             <div class="input-group">
                 <label for="user_id">User ID</label>
@@ -108,8 +18,11 @@
                 <label for="referral_code">Referral Code</label>
                 <input type="text" id="referral_code" name="referral_code" placeholder="Enter Referral Code" required>
             </div>
-            <button type="submit" class="button">Apply Referral</button>
+            <button type="submit" class="btn" style="width: 100%; clip-path: none; border-radius: 4px;">Apply Referral</button>
         </form>
+        <div style="margin-top: 20px;">
+            <a href="/" style="color: var(--val-gray); font-size: 0.9rem;">Back to Home</a>
+        </div>
     </div>
 
     <script>
