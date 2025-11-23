@@ -26,8 +26,8 @@ def get_base_template(title: str, message: str, type: str, icon: str, button_tex
         <link rel="stylesheet" href="/static/style.css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     </head>
-    <body>
-        <div class="container" style="padding-top: 100px; display: flex; justify-content: center;">
+    <body class="referral-body">
+        <div class="container">
             <div class="status-card {type}">
                 <i class="{icon}"></i>
                 <h2>{title}</h2>
