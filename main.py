@@ -119,7 +119,7 @@ async def index(request: Request):
 
 @app.get("/TermsOfService", response_class=HTMLResponse)
 async def TOS(request: Request):
-    return templates.TemplateResponse("TOS.html"), {"request": request}
+    return templates.TemplateResponse("TOS.html", {"request": request})
 
 
 @app.get("/PrivacyPolicy", response_class=HTMLResponse)
