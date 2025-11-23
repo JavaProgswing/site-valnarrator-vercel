@@ -176,12 +176,19 @@ async def handle_referral_apply(
     request: Request, response: Response, referral_code: str = None, user_id: str = None
 ):
     # Construct retry link
-    retry_link = f"/referral?user-id={user_id}&referralCode={referral_code}" if user_id and referral_code else "/referral"
+    params = []
+    if user_id:
+        params.append(f"user-id={user_id}")
+    if referral_code:
+        params.append(f"referralCode={referral_code}")
+    
+    query_string = "&".join(params)
+    retry_link = f"/referral?{query_string}" if query_string else "/referral"
     
     if not user_id or not referral_code:
         return HTMLResponse(
             content=failure_template(
-                "Invalid Request", "Missing referral code or user ID!", "Try Again", "/referral"
+                "Invalid Request", "Missing referral code or user ID!", "Try Again", retry_link
             ),
             status_code=status.HTTP_400_BAD_REQUEST,
         )
