@@ -262,8 +262,36 @@
         urlParams.get("userId") ||
         urlParams.get("user-id") ||
         localStorage.getItem("userid");
+
+      async function verifyUser(uid, isUrlParam = false) {
+        if (!uid) return;
+        
+        try {
+            const response = await fetch(`/user/${uid}`);
+            if (!response.ok) {
+                if (isUrlParam) {
+                    alert("Invalid User ID found in URL. Redirecting to home.");
+                    window.location.href = "/";
+                } else {
+                    alert("Invalid User ID. Please check and try again.");
+                }
+                return false;
+            }
+            return true;
+        } catch (error) {
+            console.error("Verification error:", error);
+            return false;
+        }
+      }
+
       if (initialUserId) {
         updateReferralLink(initialUserId);
+        
+        // If from URL, verify strictly
+        const isFromUrl = urlParams.has("userId") || urlParams.has("user-id");
+        if (isFromUrl) {
+             verifyUser(initialUserId, true);
+        }
       }
 
       buyBtn.onclick = function () {
