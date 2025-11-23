@@ -1,50 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Referral Code - Valorant Narrator</title>
-    <link rel="stylesheet" href="static/style.css">
-</head>
-<body class="referral-body">
+    <link rel="stylesheet" href="static/style.css" />
+  </head>
+  <body class="referral-body">
     <div class="referral-card">
-        <h1 style="margin-bottom: 30px;">Valorant Narrator</h1>
-        <form action="/referralApply" method="get" id="referralForm">
-            <div class="input-group">
-                <label for="user_id">User ID</label>
-                <input type="text" id="user_id" name="user_id" placeholder="Enter User ID" required>
-            </div>
-            <div class="input-group">
-                <label for="referral_code">Referral Code</label>
-                <input type="text" id="referral_code" name="referral_code" placeholder="Enter Referral Code" required>
-            </div>
-            <button type="submit" class="btn" style="width: 100%; clip-path: none; border-radius: 4px;">Apply Referral</button>
-        </form>
-        <div style="margin-top: 20px;">
-            <a href="/" style="color: var(--val-gray); font-size: 0.9rem;">Back to Home</a>
+      <h1 style="margin-bottom: 30px">Valorant Narrator</h1>
+      <form action="/referralApply" method="get" id="referralForm">
+        <div class="input-group">
+          <label for="user_id">User ID</label>
+          <input
+            type="text"
+            id="user_id"
+            name="user_id"
+            placeholder="Enter User ID"
+            required
+          />
         </div>
+        <div class="input-group">
+          <label for="referral_code">Referral Code</label>
+          <input
+            type="text"
+            id="referral_code"
+            name="referral_code"
+            placeholder="Enter Referral Code"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          class="btn"
+          style="width: 100%; clip-path: none; border-radius: 4px"
+        >
+          Apply Referral
+        </button>
+      </form>
+      <div style="margin-top: 20px">
+        <a href="/" style="color: var(--val-gray); font-size: 0.9rem"
+          >Back to Home</a
+        >
+      </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const referralCode = urlParams.get('referralCode');
-            const userId = urlParams.get('user-id') || urlParams.get('userId'); // Handle both cases
+      document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const referralCode = urlParams.get("referralCode");
+        const userId = urlParams.get("user-id") || urlParams.get("userId"); // Handle both cases
 
-            if (referralCode) {
-                const referralCodeInput = document.getElementById('referral_code');
-                referralCodeInput.value = referralCode;
-                // Optional: disable if you want to lock it
-                // referralCodeInput.disabled = true; 
-            }
+        if (referralCode) {
+          const referralCodeInput = document.getElementById("referral_code");
+          referralCodeInput.value = referralCode;
+          // Optional: disable if you want to lock it
+          // referralCodeInput.disabled = true;
+        }
 
-            if (userId) {
-                const userIdInput = document.getElementById('user_id');
-                userIdInput.value = userId;
-                // Optional: disable if you want to lock it
-                // userIdInput.disabled = true;
-            }
-        });
+        if (userId) {
+          const userIdInput = document.getElementById("user_id");
+          userIdInput.value = userId;
+          // Optional: disable if you want to lock it
+          userIdInput.disabled = true;
+        }
+      });
     </script>
-</body>
+  </body>
 </html>
