@@ -445,7 +445,7 @@
           );
 
           if (response.ok) {
-            const subscriptionURL = response.headers.get("subscriptionurl");
+            const subscriptionURL = response.headers.get("Subscriptionurl");
 
             if (subscriptionURL) {
               window.location.href = subscriptionURL;
