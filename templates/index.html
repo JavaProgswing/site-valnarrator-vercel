@@ -124,14 +124,20 @@
             <!-- One Time Payment Tab -->
             <div id="one-time" class="tab-content active">
                 <p style="text-align: center; margin-bottom: 20px;">Get permanent access to premium features.</p>
-                <div id="paypal-container-9T3V8M3MFPBNE" style="text-align: center;"></div>
+                
+                <div class="input-group" id="one-time-user-id-group">
+                    <label for="one-time-user-id">User ID (from App)</label>
+                    <input type="text" id="one-time-user-id" placeholder="Enter your User ID">
+                </div>
+
+                <div id="paypal-container-9T3V8M3MFPBNE" style="text-align: center; display: flex; justify-content: center; margin-top: 20px;"></div>
                 <p class="payment-note">Powered by PayPal Secure Checkout</p>
             </div>
 
             <!-- Subscription Tab -->
             <div id="subscription" class="tab-content">
                 <p style="text-align: center; margin-bottom: 20px;">Monthly access to all premium features.</p>
-                <div class="input-group">
+                <div class="input-group" id="sub-user-id-group">
                     <label for="sub-user-id">User ID (from App)</label>
                     <input type="text" id="sub-user-id" placeholder="Enter your User ID">
                 </div>
@@ -147,17 +153,51 @@
         const modal = document.getElementById('payment-modal');
         const buyBtn = document.getElementById('buy-btn');
         const closeBtn = document.querySelector('.close-modal');
+        
         const subUserIdInput = document.getElementById('sub-user-id');
+        const oneTimeUserIdInput = document.getElementById('one-time-user-id');
+        const subUserIdGroup = document.getElementById('sub-user-id-group');
+        const oneTimeUserIdGroup = document.getElementById('one-time-user-id-group');
 
         buyBtn.onclick = function() {
             modal.style.display = 'flex';
+            
             // Auto-fill User ID if present in URL or LocalStorage
             const urlParams = new URLSearchParams(window.location.search);
-            const userId = urlParams.get('userId') || localStorage.getItem("userid");
+            let userId = urlParams.get('userId');
+            
             if (userId) {
+                // If in URL, pre-fill and maybe hide or disable? 
+                // User said: "ask... only if current page doesn't have..."
+                // So we hide the input if it's in the URL to keep it clean, 
+                // OR we just pre-fill it. Hiding might be better UX if we are sure.
+                // Let's pre-fill and disable it to show it's locked in.
                 subUserIdInput.value = userId;
+                oneTimeUserIdInput.value = userId;
+                subUserIdInput.disabled = true;
+                oneTimeUserIdInput.disabled = true;
+            } else {
+                // Check local storage if not in URL
+                userId = localStorage.getItem("userid");
+                if (userId) {
+                    subUserIdInput.value = userId;
+                    oneTimeUserIdInput.value = userId;
+                }
+                // Ensure inputs are enabled if not from URL
+                subUserIdInput.disabled = false;
+                oneTimeUserIdInput.disabled = false;
             }
         }
+
+        // Sync inputs
+        subUserIdInput.addEventListener('input', function() {
+            oneTimeUserIdInput.value = this.value;
+            localStorage.setItem("userid", this.value);
+        });
+        oneTimeUserIdInput.addEventListener('input', function() {
+            subUserIdInput.value = this.value;
+            localStorage.setItem("userid", this.value);
+        });
 
         closeBtn.onclick = function() {
             modal.style.display = 'none';
@@ -190,7 +230,7 @@
                 return;
             }
             
-            // Save to local storage for future convenience
+            // Save to local storage
             localStorage.setItem("userid", userId);
 
             const subscribeBtn = document.getElementById('subscribe-btn');
@@ -218,15 +258,11 @@
                 });
 
                 if (response.ok) {
-                    // The Java code checks for a header "subscriptionURL". 
-                    // Browsers expose headers via response.headers.
                     const subscriptionURL = response.headers.get("subscriptionURL");
                     
                     if (subscriptionURL) {
                         window.location.href = subscriptionURL;
                     } else {
-                        // Fallback: check body if header is missing (sometimes CORS hides headers)
-                        // But user specifically said header. Let's try to parse body just in case.
                         const text = await response.text();
                         console.log("Response:", text);
                         alert("Subscription created but redirect URL missing. Please contact support.");
