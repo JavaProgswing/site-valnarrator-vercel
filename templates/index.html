@@ -270,6 +270,12 @@
                   "
                 >
                   <input
+                    type="hidden"
+                    id="paypal-custom-id"
+                    name="custom"
+                    value=""
+                  />
+                  <input
                     class="pp-9T3V8M3MFPBNE"
                     type="submit"
                     value="Pay Now"
@@ -390,6 +396,7 @@
         "one-time-user-id-group"
       );
       const referralLink = document.getElementById("referral-link");
+      const paypalCustomIdInput = document.getElementById("paypal-custom-id");
 
       // Update Referral Link with User ID
       function updateReferralLink(uid) {
@@ -397,6 +404,13 @@
           referralLink.href = `/referral?user-id=${uid}`;
         } else {
           referralLink.href = "/referral";
+        }
+      }
+
+      // Update PayPal Custom ID
+      function updatePayPalCustomId(uid) {
+        if (paypalCustomIdInput) {
+          paypalCustomIdInput.value = uid || "";
         }
       }
 
@@ -432,6 +446,7 @@
       async function verifyUser(uid, isUrlParam = false) {
         if (!uid) {
           setPaymentState(false);
+          updatePayPalCustomId("");
           return false;
         }
 
@@ -439,6 +454,7 @@
           const response = await fetch(`/user/${uid}`);
           if (!response.ok) {
             setPaymentState(false);
+            updatePayPalCustomId("");
             if (isUrlParam) {
               alert("Invalid User ID found in URL. Redirecting to home.");
               window.location.href = "/";
@@ -448,10 +464,12 @@
             return false;
           }
           setPaymentState(true);
+          updatePayPalCustomId(uid);
           return true;
         } catch (error) {
           console.error("Verification error:", error);
           setPaymentState(false);
+          updatePayPalCustomId("");
           return false;
         }
       }
@@ -501,6 +519,7 @@
         subUserIdInput.value = val;
         oneTimeUserIdInput.value = val;
         localStorage.setItem("userid", val);
+        updatePayPalCustomId(val);
 
         // Disable immediately on change until verified
         setPaymentState(false);
