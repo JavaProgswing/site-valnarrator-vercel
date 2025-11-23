@@ -39,12 +39,12 @@ def get_base_template(title: str, message: str, type: str, icon: str, button_tex
     </html>
     """
 
-def failure_template(title: str, message: str) -> str:
-    return get_base_template(title, message, "error", "fa-solid fa-circle-xmark")
+def failure_template(title: str, message: str, button_text: str = "Return Home", button_link: str = "/") -> str:
+    return get_base_template(title, message, "error", "fa-solid fa-circle-xmark", button_text, button_link)
 
-def success_template(duration: str) -> str:
-    message = f"You've been granted ValNarrator Premium for {duration}.<br>Restart your app to continue using ValNarrator Premium."
-    return get_base_template("Referral Applied", message, "success", "fa-solid fa-circle-check")
+def success_template(duration: str, user_id: str) -> str:
+    message = f"<strong>Awesome!</strong><br>You've unlocked ValNarrator Premium for <strong>{duration}</strong>.<br>Restart your app to enjoy unlimited access and premium voices!"
+    return get_base_template("Referral Applied!", message, "success", "fa-solid fa-circle-check", "Return to Home", f"/?user-id={user_id}")
 
 def rate_limited_template(request: Request, exc: RateLimitExceeded) -> str:
     return get_base_template("Rate Limit Exceeded", "You have made too many requests. Please try again later.", "warning", "fa-solid fa-triangle-exclamation")
@@ -175,10 +175,13 @@ def convert_seconds(seconds):
 async def handle_referral_apply(
     request: Request, response: Response, referral_code: str = None, user_id: str = None
 ):
+    # Construct retry link
+    retry_link = f"/referral?user-id={user_id}&referralCode={referral_code}" if user_id and referral_code else "/referral"
+    
     if not user_id or not referral_code:
         return HTMLResponse(
             content=failure_template(
-                "Invalid Request", "Missing referral code or user ID!"
+                "Invalid Request", "Missing referral code or user ID!", "Try Again", "/referral"
             ),
             status_code=status.HTTP_400_BAD_REQUEST,
         )
@@ -193,7 +196,7 @@ async def handle_referral_apply(
 
     if not referral_record:
         return HTMLResponse(
-            content=failure_template("Invalid Referral", "Referral code not found!"),
+            content=failure_template("Invalid Referral", "Referral code not found!", "Try Again", retry_link),
             status_code=status.HTTP_401_UNAUTHORIZED,
         )
 
@@ -208,7 +211,7 @@ async def handle_referral_apply(
     if not user_exists:
         return HTMLResponse(
             content=failure_template(
-                "Invalid User", "User ID does not exist in our records."
+                "Invalid User", "User ID does not exist in our records.", "Try Again", retry_link
             ),
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
@@ -223,8 +226,22 @@ async def handle_referral_apply(
     ).execute()
 
     return HTMLResponse(
-        content=success_template(convert_seconds(duration)), status_code=200
+        content=success_template(convert_seconds(duration), user_id), status_code=200
     )
+
+@app.get("/user/{user_id}")
+@limiter.limit("10/1minute")
+async def get_user_details(request: Request, response: Response, user_id: str):
+    user_response = (
+        supabase.table("userhwids").select("quotaused, premium, premium_till").eq("userid", user_id).execute()
+    )
+    user_data = user_response.data
+
+    if not user_data:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {"error": "User not found"}
+
+    return user_data[0]
 
 @app.get("/discord")
 async def discord(request: Request):

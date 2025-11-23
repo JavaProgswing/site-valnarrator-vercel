@@ -29,17 +29,20 @@
         document.addEventListener('DOMContentLoaded', function () {
             const urlParams = new URLSearchParams(window.location.search);
             const referralCode = urlParams.get('referralCode');
+            const userId = urlParams.get('user-id') || urlParams.get('userId'); // Handle both cases
+
             if (referralCode) {
                 const referralCodeInput = document.getElementById('referral_code');
                 referralCodeInput.value = referralCode;
-                referralCodeInput.disabled = true;
+                // Optional: disable if you want to lock it
+                // referralCodeInput.disabled = true; 
+            }
 
-                // Add a hidden input to include the referral code in the form submission
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = 'referral_code';
-                hiddenInput.value = referralCode;
-                document.getElementById('referralForm').appendChild(hiddenInput);
+            if (userId) {
+                const userIdInput = document.getElementById('user_id');
+                userIdInput.value = userId;
+                // Optional: disable if you want to lock it
+                // userIdInput.disabled = true;
             }
         });
     </script>

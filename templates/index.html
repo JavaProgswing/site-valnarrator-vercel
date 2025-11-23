@@ -134,6 +134,7 @@
         <div style="margin-top: 20px">
           <a
             href="/referral"
+            id="referral-link"
             style="
               color: var(--val-gray);
               font-size: 0.9rem;
@@ -244,46 +245,70 @@
       const oneTimeUserIdGroup = document.getElementById(
         "one-time-user-id-group"
       );
+      const referralLink = document.getElementById("referral-link");
+
+      // Update Referral Link with User ID
+      function updateReferralLink(uid) {
+        if (uid) {
+          referralLink.href = `/referral?user-id=${uid}`;
+        } else {
+          referralLink.href = "/referral";
+        }
+      }
+
+      // Check URL or LocalStorage on load
+      const urlParams = new URLSearchParams(window.location.search);
+      let initialUserId =
+        urlParams.get("userId") ||
+        urlParams.get("user-id") ||
+        localStorage.getItem("userid");
+      if (initialUserId) {
+        updateReferralLink(initialUserId);
+      }
 
       buyBtn.onclick = function () {
         modal.style.display = "flex";
 
         // Auto-fill User ID if present in URL or LocalStorage
         const urlParams = new URLSearchParams(window.location.search);
-        let userId = urlParams.get("user-id");
+        let userId = urlParams.get("userId") || urlParams.get("user-id");
 
         if (userId) {
-          // If in URL, pre-fill and maybe hide or disable?
-          // User said: "ask... only if current page doesn't have..."
-          // So we hide the input if it's in the URL to keep it clean,
-          // OR we just pre-fill it. Hiding might be better UX if we are sure.
-          // Let's pre-fill and disable it to show it's locked in.
-          subUserIdInput.value = userId;
-          oneTimeUserIdInput.value = userId;
-          subUserIdInput.disabled = true;
-          oneTimeUserIdInput.disabled = true;
-        } else {
-          // Check local storage if not in URL
-          userId = localStorage.getItem("userid");
-          if (userId) {
             subUserIdInput.value = userId;
             oneTimeUserIdInput.value = userId;
-          }
-          // Ensure inputs are enabled if not from URL
-          subUserIdInput.disabled = false;
-          oneTimeUserIdInput.disabled = false;
+            subUserIdInput.disabled = true;
+            oneTimeUserIdInput.disabled = true;
+        } else {
+            userId = localStorage.getItem("userid");
+            if (userId) {
+                subUserIdInput.value = userId;
+                oneTimeUserIdInput.value = userId;
+            }
+            subUserIdInput.disabled = false;
+            oneTimeUserIdInput.disabled = false;
         }
       };
 
-      // Sync inputs
-      subUserIdInput.addEventListener("input", function () {
-        oneTimeUserIdInput.value = this.value;
-        localStorage.setItem("userid", this.value);
-      });
-      oneTimeUserIdInput.addEventListener("input", function () {
-        subUserIdInput.value = this.value;
-        localStorage.setItem("userid", this.value);
-      });
+      // Sync inputs and Verify on Blur
+      function handleInput(e) {
+        const val = e.target.value;
+        subUserIdInput.value = val;
+        oneTimeUserIdInput.value = val;
+        localStorage.setItem("userid", val);
+      }
+
+      function handleBlur(e) {
+        const val = e.target.value;
+        if (val) {
+            verifyUser(val, false);
+        }
+      }
+
+      subUserIdInput.addEventListener("input", handleInput);
+      oneTimeUserIdInput.addEventListener("input", handleInput);
+      
+      subUserIdInput.addEventListener("blur", handleBlur);
+      oneTimeUserIdInput.addEventListener("blur", handleBlur);
 
       closeBtn.onclick = function () {
         modal.style.display = "none";
