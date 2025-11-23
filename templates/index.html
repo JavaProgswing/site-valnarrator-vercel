@@ -503,7 +503,10 @@
           
           if (data.premium) {
              // User is premium
-             const premiumTill = data.premium_till ? new Date(data.premium_till).toLocaleDateString() : "Lifetime";
+             let premiumTill = "Lifetime";
+             if (data.premium_till && data.premium_till !== 0 && data.premium_till !== "0") {
+                 premiumTill = new Date(data.premium_till).toLocaleDateString();
+             }
              
              const premiumContent = `
                 <div style="font-size: 3rem; margin-bottom: 20px;">👑</div>
