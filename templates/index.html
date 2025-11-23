@@ -263,20 +263,22 @@
         urlParams.get("user-id") ||
         localStorage.getItem("userid");
 
-      const paypalContainer = document.getElementById("paypal-container-9T3V8M3MFPBNE");
+      const paypalContainer = document.getElementById(
+        "paypal-container-9T3V8M3MFPBNE"
+      );
       const subscribeBtn = document.getElementById("subscribe-btn");
 
       function setPaymentState(enabled) {
         if (enabled) {
-            paypalContainer.style.opacity = "1";
-            paypalContainer.style.pointerEvents = "auto";
-            subscribeBtn.disabled = false;
-            subscribeBtn.innerText = "Subscribe Monthly";
+          paypalContainer.style.opacity = "1";
+          paypalContainer.style.pointerEvents = "auto";
+          subscribeBtn.disabled = false;
+          subscribeBtn.innerText = "Subscribe Monthly";
         } else {
-            paypalContainer.style.opacity = "0.5";
-            paypalContainer.style.pointerEvents = "none";
-            subscribeBtn.disabled = true;
-            subscribeBtn.innerText = "Enter Valid User ID";
+          paypalContainer.style.opacity = "0.5";
+          paypalContainer.style.pointerEvents = "none";
+          subscribeBtn.disabled = true;
+          subscribeBtn.innerText = "Enter Valid User ID";
         }
       }
 
@@ -285,41 +287,41 @@
 
       async function verifyUser(uid, isUrlParam = false) {
         if (!uid) {
-            setPaymentState(false);
-            return false;
+          setPaymentState(false);
+          return false;
         }
-        
+
         try {
-            const response = await fetch(`/user/${uid}`);
-            if (!response.ok) {
-                setPaymentState(false);
-                if (isUrlParam) {
-                    alert("Invalid User ID found in URL. Redirecting to home.");
-                    window.location.href = "/";
-                } else {
-                    alert("Invalid User ID. Please check and try again.");
-                }
-                return false;
-            }
-            setPaymentState(true);
-            return true;
-        } catch (error) {
-            console.error("Verification error:", error);
+          const response = await fetch(`/user/${uid}`);
+          if (!response.ok) {
             setPaymentState(false);
+            if (isUrlParam) {
+              alert("Invalid User ID found in URL. Redirecting to home.");
+              window.location.href = "/";
+            } else {
+              alert("Invalid User ID. Please check and try again.");
+            }
             return false;
+          }
+          setPaymentState(true);
+          return true;
+        } catch (error) {
+          console.error("Verification error:", error);
+          setPaymentState(false);
+          return false;
         }
       }
 
       if (initialUserId) {
         updateReferralLink(initialUserId);
-        
+
         // If from URL, verify strictly
         const isFromUrl = urlParams.has("userId") || urlParams.has("user-id");
         if (isFromUrl) {
-             verifyUser(initialUserId, true);
+          verifyUser(initialUserId, true);
         } else {
-            // If from local storage, verify silently but don't alert if fails (just keep disabled)
-             verifyUser(initialUserId, false);
+          // If from local storage, verify silently but don't alert if fails (just keep disabled)
+          verifyUser(initialUserId, false);
         }
       }
 
@@ -331,21 +333,21 @@
         let userId = urlParams.get("userId") || urlParams.get("user-id");
 
         if (userId) {
+          subUserIdInput.value = userId;
+          oneTimeUserIdInput.value = userId;
+          subUserIdInput.disabled = true;
+          oneTimeUserIdInput.disabled = true;
+          // Verification happened on load
+        } else {
+          userId = localStorage.getItem("userid");
+          if (userId) {
             subUserIdInput.value = userId;
             oneTimeUserIdInput.value = userId;
-            subUserIdInput.disabled = true;
-            oneTimeUserIdInput.disabled = true;
-            // Verification happened on load
-        } else {
-            userId = localStorage.getItem("userid");
-            if (userId) {
-                subUserIdInput.value = userId;
-                oneTimeUserIdInput.value = userId;
-                // Verify again to be sure
-                verifyUser(userId, false);
-            }
-            subUserIdInput.disabled = false;
-            oneTimeUserIdInput.disabled = false;
+            // Verify again to be sure
+            verifyUser(userId, false);
+          }
+          subUserIdInput.disabled = false;
+          oneTimeUserIdInput.disabled = false;
         }
       };
 
@@ -355,7 +357,7 @@
         subUserIdInput.value = val;
         oneTimeUserIdInput.value = val;
         localStorage.setItem("userid", val);
-        
+
         // Disable immediately on change until verified
         setPaymentState(false);
       }
@@ -363,13 +365,13 @@
       function handleBlur(e) {
         const val = e.target.value;
         if (val) {
-            verifyUser(val, false);
+          verifyUser(val, false);
         }
       }
 
       subUserIdInput.addEventListener("input", handleInput);
       oneTimeUserIdInput.addEventListener("input", handleInput);
-      
+
       subUserIdInput.addEventListener("blur", handleBlur);
       oneTimeUserIdInput.addEventListener("blur", handleBlur);
 
@@ -443,7 +445,7 @@
           );
 
           if (response.ok) {
-            const subscriptionURL = response.headers.get("subscriptionURL");
+            const subscriptionURL = response.headers.get("subscriptionurl");
 
             if (subscriptionURL) {
               window.location.href = subscriptionURL;
