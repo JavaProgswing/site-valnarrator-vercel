@@ -179,8 +179,7 @@ async def handle_referral_apply(
     params = []
     if user_id:
         params.append(f"user-id={user_id}")
-    if referral_code:
-        params.append(f"referralCode={referral_code}")
+    # User requested NOT to include referralCode in retry link
     
     query_string = "&".join(params)
     retry_link = f"/referral?{query_string}" if query_string else "/referral"
