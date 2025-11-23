@@ -522,3 +522,42 @@ a {
     border-top: 4px solid #ffc107;
 }
 .status-card.warning i { color: #ffc107; }
+
+/* --- Payment Buttons --- */
+.btn-razorpay {
+    background: linear-gradient(90deg, #183380 0%, #1e40a0 100%);
+    color: var(--val-white);
+    padding: 12px 25px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 4px; /* Matching site theme (was 8px in snippet, but 4px fits better) */
+    cursor: pointer;
+    width: 100%;
+    max-width: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform 0.2s, filter 0.2s;
+    margin: 10px auto;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-razorpay:hover {
+    filter: brightness(1.2);
+    transform: translateY(-2px);
+}
+
+.btn-razorpay svg {
+    width: 18px;
+    height: 20px;
+}
+
+#paypal-button-container {
+    width: 100%;
+    max-width: 250px;
+    margin: 10px auto;
+    z-index: 1; /* Ensure it's clickable */
+}
