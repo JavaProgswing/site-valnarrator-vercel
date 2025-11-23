@@ -308,8 +308,8 @@
                 RAZORPAY
               </button>
             </div>
-          <div id="onetime-premium-msg" style="display: none; text-align: center; padding: 40px 20px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 70, 85, 0.3); margin-top: 20px;"></div>
           </div>
+          <div id="onetime-premium-msg" style="display: none; text-align: center; padding: 40px 20px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 70, 85, 0.3); margin-top: 20px;"></div>
         </div>
 
         <!-- Subscription Tab -->
@@ -505,7 +505,7 @@
              // User is premium
              let premiumTill = "Lifetime";
              if (data.premium_till && data.premium_till !== 0 && data.premium_till !== "0") {
-                 premiumTill = new Date(data.premium_till).toLocaleDateString();
+                 premiumTill = new Date(data.premium_till * 1000).toLocaleDateString();
              }
              
              const premiumContent = `
