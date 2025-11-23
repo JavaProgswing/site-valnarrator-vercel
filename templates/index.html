@@ -195,11 +195,24 @@
             />
           </div>
 
-          <div
-            id="paypal-container-9T3V8M3MFPBNE"
-            style="text-align: center; margin-top: 20px"
-          ></div>
-          <p class="payment-note">Powered by PayPal Secure Checkout</p>
+          <div id="paypal-container-9T3V8M3MFPBNE" style="margin-top: 20px; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 70, 85, 0.3);">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <h3 style="color: var(--val-red); margin: 0 0 8px 0; font-size: 1.5rem; font-weight: 700;">ValNarrator Premium</h3>
+              <div style="color: #FFD140; font-size: 2rem; font-weight: bold; margin: 8px 0;">$4.99</div>
+              <p style="color: var(--val-gray); margin: 12px 0 0 0; line-height: 1.6; font-size: 0.95rem;">Enhanced in-game text-to-speech experience for Valorant players. Includes unlimited narration quota, premium voice options, and faster performance.</p>
+            </div>
+            
+            <div style="display: flex; justify-content: center;">
+              <div>
+                <style>.pp-9T3V8M3MFPBNE{text-align:center;border:none;border-radius:0.25rem;min-width:11.625rem;padding:0 2rem;height:2.625rem;font-weight:bold;background-color:#FFD140;color:#000000;font-family:"Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.25rem;cursor:pointer;}</style>
+                <form action="https://www.paypal.com/ncp/payment/9T3V8M3MFPBNE" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
+                  <input class="pp-9T3V8M3MFPBNE" type="submit" value="Pay Now" />
+                  <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" />
+                  <section style="font-size: 0.75rem;"> Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem;vertical-align:middle;"/></section>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Subscription Tab -->
@@ -212,21 +225,29 @@
               placeholder="Enter your User ID"
             />
           </div>
-          <button
-            id="subscribe-btn"
-            class="btn"
-            style="width: 100%; clip-path: none; border-radius: 4px; background-color: #FFC439; color: #000000; font-weight: bold; border: none;"
-          >
-            Subscribe Monthly
-          </button>
-          <p class="payment-note">
-            You will be redirected to PayPal to complete the subscription.
-          </p>
+
+          <div style="margin-top: 20px; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 70, 85, 0.3);">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <h3 style="color: var(--val-red); margin: 0 0 8px 0; font-size: 1.5rem; font-weight: 700;">ValNarrator Premium</h3>
+              <div style="color: #FFD140; font-size: 2rem; font-weight: bold; margin: 8px 0;">$4.99<span style="font-size: 1rem; color: var(--val-gray);">/month</span></div>
+              <p style="color: var(--val-gray); margin: 12px 0 20px 0; line-height: 1.6; font-size: 0.95rem;">Enhanced in-game text-to-speech experience for Valorant players. Includes unlimited narration quota, premium voice options, and faster performance.</p>
+            </div>
+            
+            <button
+              id="subscribe-btn"
+              class="btn"
+              style="width: 100%; clip-path: none; border-radius: 4px; background-color: #FFD140; color: #000000; font-weight: bold; border: none; font-size: 1rem; padding: 0.75rem 2rem;"
+            >
+              Subscribe Monthly
+            </button>
+            <p class="payment-note" style="margin-top: 12px; text-align: center;">
+              You will be redirected to PayPal to complete the subscription.
+            </p>
+          </div>
         </div>
       </div>
     </div>
 
-    <script src="https://www.paypal.com/sdk/js?client-id=BAAF9VySvCCI2VQbOYDDLiqEiSXGcJjn4F1_mlOQ8rir20xMnopMvB6DFJfR2uDO_NXU0PVNfbAkFB7lXI&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
     <script>
       // Modal Logic
       const modal = document.getElementById("payment-modal");
@@ -390,13 +411,6 @@
         document.getElementById(tabName).classList.add("active");
         event.target.classList.add("active");
       }
-
-      // PayPal Hosted Button (One Time)
-      paypal
-        .HostedButtons({
-          hostedButtonId: "9T3V8M3MFPBNE",
-        })
-        .render("#paypal-container-9T3V8M3MFPBNE");
 
       // Subscription Logic
       document.getElementById("subscribe-btn").onclick = async function () {
