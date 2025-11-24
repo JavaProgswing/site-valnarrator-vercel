@@ -1,4 +1,5 @@
 import os
+import traceback
 import aiohttp
 import logging
 import time
@@ -278,18 +279,23 @@ async def handle_referral_apply(
 @app.get("/user/{user_id}")
 @limiter.limit("10/1minute")
 async def get_user_details(request: Request, response: Response, user_id: str):
-    user_response = (
-        supabase.table("userhwids")
-        .select("quotaused, premium, premium_till")
-        .eq("userid", user_id)
-        .execute()
-    )
-    user_data = user_response.data
+    try:
+        user_response = (
+            supabase.table("userhwids")
+            .select("quotaused, premium, premium_till")
+            .eq("userid", user_id)
+            .execute()
+        )
+        user_data = user_response.data
 
-    if not user_data:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return {"error": "User not found"}
-
+        if not user_data:
+            response.status_code = status.HTTP_404_NOT_FOUND
+            return {"error": "User not found"}
+    except Exception as e:
+        traceback_str = traceback.format_exc()
+        logger.error(f"Error fetching user data: {e}\n{traceback_str}")
+        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        return {"error": "Internal server error"}
     return user_data[0]
 
 
