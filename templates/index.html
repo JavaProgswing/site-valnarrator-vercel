@@ -520,9 +520,12 @@
             if (isUrlParam) {
               window.location.href = "/";
             }
+            subUserIdInput.disabled = true;
+            oneTimeUserIdInput.disabled = true;
             return false;
           }
-
+          subUserIdInput.disabled = false;
+          oneTimeUserIdInput.disabled = false;
           const data = await response.json();
 
           if (data.premium) {
@@ -578,6 +581,7 @@
 
         // If from URL, verify strictly
         const isFromUrl = urlParams.has("userId") || urlParams.has("user-id");
+        localStorage.setItem("userid", initialUserId);
         if (isFromUrl) {
           verifyUser(initialUserId, true);
         } else {
@@ -627,6 +631,7 @@
       function handleBlur(e) {
         const val = e.target.value;
         if (val) {
+          localStorage.setItem("userid", val);
           verifyUser(val, false);
         }
       }
