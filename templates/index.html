@@ -676,16 +676,7 @@
 
         try {
           const payload = {
-            plan_id: "P-09E05488G5362274WMTB3YGQ",
-            quantity: "1",
-            custom_id: userId,
-            application_context: {
-              shipping_preference: "NO_SHIPPING",
-              return_url:
-                "https://payment-valnarrator.vercel.app/payment_return",
-              cancel_url:
-                "https://payment-valnarrator.vercel.app/payment_cancel",
-            },
+            user_id: userId,
           };
 
           const response = await fetch(
