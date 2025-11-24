@@ -510,10 +510,7 @@
             setPaymentState(false);
             updatePayPalCustomId("");
             if (isUrlParam) {
-              alert("Invalid User ID found in URL. Redirecting to home.");
               window.location.href = "/";
-            } else {
-              alert("Invalid User ID. Please check and try again.");
             }
             return false;
           }
@@ -663,7 +660,7 @@
       document.getElementById("subscribe-btn").onclick = async function () {
         const userId = subUserIdInput.value.trim();
         if (!userId) {
-          alert("Please enter your User ID.");
+          console.log("Please enter your User ID before subscribing.");
           return;
         }
 
@@ -719,7 +716,7 @@
       rzpButton.onclick = async function () {
         const userId = oneTimeUserIdInput.value.trim();
         if (!userId) {
-          alert("Please enter your User ID.");
+          console.log("Please enter your User ID before razorpay payment.");
           return;
         }
 
@@ -795,7 +792,7 @@
       paypalOneTimeBtn.onclick = async function () {
         const userId = oneTimeUserIdInput.value.trim();
         if (!userId) {
-          alert("Please enter your User ID.");
+          console.log("Please enter your User ID before PayPal payment.");
           return;
         }
 
