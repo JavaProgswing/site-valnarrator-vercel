@@ -766,12 +766,16 @@
               "ValNarrator Premium — Enhanced in-game text-to-speech experience for Valorant players. Includes unlimited narration quota, premium voice options, and faster performance.",
             order_id: data.order_id,
             handler: function (response) {
-              console.log("Payment success:", response);
-              alert(
-                "Payment Successful! Payment ID: " +
-                  response.razorpay_payment_id
-              );
-              // You might want to redirect or update UI here
+              const redirectURL =
+                "https://payment-valnarrator.vercel.app/payment_return?" +
+                "rp_order_id=" +
+                response.razorpay_order_id +
+                "&rp_payment_id=" +
+                response.razorpay_payment_id +
+                "&rp_signature=" +
+                response.razorpay_signature;
+
+              window.location.href = redirectURL;
             },
             theme: {
               color: "#ff4655",
