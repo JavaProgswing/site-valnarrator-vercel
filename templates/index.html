@@ -476,12 +476,20 @@
       );
       const subscribeBtn = document.getElementById("subscribe-btn");
 
+      const onetimePremiumMsg = document.getElementById("onetime-premium-msg");
+      const subsPremiumMsg = document.getElementById("subs-premium-msg");
       function setPaymentState(enabled) {
+        onetimePaymentContainer.style.display = "block";
+        subsPaymentContainer.style.display = "block";
+
+        onetimePremiumMsg.style.display = "none";
+        subsPremiumMsg.style.display = "none";
         if (enabled) {
           onetimePaymentContainer.style.opacity = "1";
           onetimePaymentContainer.style.pointerEvents = "auto";
           subsPaymentContainer.style.opacity = "1";
           subsPaymentContainer.style.pointerEvents = "auto";
+
           subscribeBtn.disabled = false;
           subscribeBtn.innerText = "Subscribe Monthly";
         } else {
@@ -517,11 +525,6 @@
 
           const data = await response.json();
 
-          const onetimePremiumMsg = document.getElementById(
-            "onetime-premium-msg"
-          );
-          const subsPremiumMsg = document.getElementById("subs-premium-msg");
-
           if (data.premium) {
             // User is premium
             let premiumTill = "Lifetime";
@@ -545,8 +548,8 @@
             onetimePremiumMsg.innerHTML = premiumContent;
             subsPremiumMsg.innerHTML = premiumContent;
 
-            // onetimePaymentContainer.style.display = "none";
-            // subsPaymentContainer.style.display = "none";
+            onetimePaymentContainer.style.display = "none";
+            subsPaymentContainer.style.display = "none";
 
             onetimePremiumMsg.style.display = "block";
             subsPremiumMsg.style.display = "block";
@@ -554,8 +557,8 @@
             onetimePaymentContainer.style.display = "block";
             subsPaymentContainer.style.display = "block";
 
-            // onetimePremiumMsg.style.display = "none";
-            // subsPremiumMsg.style.display = "none";
+            onetimePremiumMsg.style.display = "none";
+            subsPremiumMsg.style.display = "none";
 
             setPaymentState(true);
           }
